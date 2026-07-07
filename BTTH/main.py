@@ -16,10 +16,12 @@ from sqlalchemy.orm import Session
 
 # Hàm lấy Session kết nối database
 from database import get_db
-
+from model import ShipmentModel
 # Nếu bảng chưa tồn tại thì tự động tạo
 # Nếu bảng đã có thì bỏ qua
 Base.metadata.create_all(bind=engine)
+
+
 
 # Khởi tạo ứng dụng FastAPI
 app = FastAPI()
@@ -46,3 +48,11 @@ def create_ship(
         "status": shipment.status,
         "tracking_number": shipment.tracking_number
     }
+
+@app.get("/shipments")
+def get_shipments(db: Session = Depends(get_db)):
+     shipments = db.query(ShipmentModel).all()
+     return{
+          "status":"Thành công",
+          "data" : shipments
+     }
